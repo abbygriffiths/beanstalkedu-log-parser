@@ -1,10 +1,16 @@
-export function parseText(text: string) {
+export function parseLines(text: string) {
     const lines = text.split('\n');
-    return lines.filter((line: string) => {
-        return (line.length !== 0) && (line !== undefined) && (line !== null);
-    }).map(parseSingleLine).filter((line) => {
-        return (line['loglevel'] === 'error') || (line['loglevel'] === 'warn')
-    });
+
+    const textIsNonEmpty = (text: string): boolean => {
+        return text.length > 0 && text !== undefined && text !== null;
+    }
+
+    return lines
+        .filter(textIsNonEmpty)
+        .map(parseSingleLine)
+        .filter((line) => {
+            return line['loglevel'] === 'error' || line['loglevel'] === 'warn';
+        });
 }
 
 function parseSingleLine(line: string) {
