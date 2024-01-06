@@ -1,16 +1,18 @@
+import cors from 'cors';
 import express, { Express, Request, Response } from 'express';
 import multer from 'multer';
-import { parseText } from './service';
+import { parseLines } from './service';
 
 const app: Express = express();
 const port = process.env.PORT || 6969;
 const upload = multer({});
 
+app.use(cors());
 app.use(express.text());
 
 app.post('/', (req: Request, res: Response) => {
     console.log(`INFO - POST '/'`);
-    res.send(parseText(req.body));
+    res.send(parseLines(req.body));
 });
 
 app.post('/upload', upload.single('file'), (req: Request, res: Response) => {
@@ -18,7 +20,11 @@ app.post('/upload', upload.single('file'), (req: Request, res: Response) => {
 
     if (req.file !== undefined) {
         let fileContents = req.file.buffer.toString('utf8');
-        res.send(parseText(fileContents));
+        res.send(parseLines(fileContents));
+    } else {
+        res.send({
+            'message': 'No file uploaded.'
+        });
     }
 });
 
