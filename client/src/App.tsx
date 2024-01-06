@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 function App() {
@@ -9,21 +11,21 @@ function App() {
     setLoading(true);
 
     try {
-      // Hit the server with a POST request
       const response = await fetch('http://localhost:6969/upload', {
         method: 'POST',
         body: new FormData(event.currentTarget),
       });
 
       if (response.ok) {
-        // Assuming the response is a JSON payload, you can download it as a file
         const data = await response.json();
         downloadJSON(data);
       } else {
-        console.error('Failed to fetch data');
+        // Display toast message for failed JSON response
+        toast.error('Failed to fetch data', { position: toast.POSITION.TOP_CENTER });
       }
     } catch (error) {
-      console.error('Error during fetch:', error);
+      // Display toast message for fetch error
+      toast.error(`Error while getting response from API: ${error}`, { position: toast.POSITION.TOP_CENTER });
     } finally {
       setLoading(false);
     }
@@ -36,13 +38,11 @@ function App() {
     const a = document.createElement('a');
     a.href = url;
     a.download = 'data.json';
-    a.style.display = 'none'; // Hide the link
+    a.style.display = 'none';
     document.body.appendChild(a);
 
-    // Trigger a click on the link
     a.click();
 
-    // Clean up
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
@@ -56,6 +56,7 @@ function App() {
         </form>
         {loading && <div className="spinner"></div>}
       </div>
+      <ToastContainer />
     </div>
   );
 }
